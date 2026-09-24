@@ -1,5 +1,6 @@
 # learning about list data types in python
 # [] is used to define a list
+#  mutable
 
 ingrediernts = ["Ginger", "Cinnamon", "Cardamom"]
 
