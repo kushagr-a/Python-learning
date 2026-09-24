@@ -23,3 +23,17 @@ print(f"Sorted Ingredients: {ingrediernts}")
 
 sugar_lvl = [1, 2, 3, 4, 5]
 print(f"Maximum sugar level: {max(sugar_lvl)}")  # finding the maximum value in the list
+
+# operator overloading in list
+list1 = ["water", "milk"]
+list2 = ["sugar", "honey"]
+combined_list = list1 + list2  # concatenating two lists
+print(f"Combined List: {combined_list}")
+
+strong_tea = ["tea"] * 3  # repeating the list elements
+print(f"Strong Tea: {strong_tea}")
+
+# byteArray data type in python
+# byteArray is a mutable sequence of bytes
+byte_array = bytearray(b"Hello World")
+print(f"Byte Array: {byte_array}")
