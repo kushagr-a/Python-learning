@@ -1,29 +1,39 @@
-# Here we are practicing the use of global and nonlocal keywords in Python.
+# Notes: `global` ka use tab karte hain jab function ke andar se bahar bane
+# variable ko update karna ho. `nonlocal` ka use nested function mein hota hai,
+# jahan inner function outer function ke variable ko update karta hai.
 
 # 1. Global Keyword:
-name = "kushagra" # idhr mene gloibal variable banya 
+# Ye global variable hai, kyunki ye function ke bahar define hua hai.
+name = "kushagra"
 
 def nameCalling():
-    global name  # Referring to the global variable 'name'
-    name = "Bharti" # idhr mene global variable ko update kiya
-    print(f"Inside the function: {name}")  # This will print the local variable 'name'
+    # `global name` batata hai ki yahan naya local variable nahi banana;
+    # bahar wale global `name` ko hi update karna hai.
+    global name
+    name = "Bharti"
+    print(f"Inside the function: {name}")
 
-nameCalling()  # Calling the function
-print(f"Outside the function: {name}")  # This will print the global variable 'name'
+nameCalling()
+# Function ke baad global `name` ki value "Bharti" ho chuki hai.
+print(f"Outside the function: {name}")
 
 
 # 2. Nonlocal Keyword:
 def outer_function():
-    name = "Atul"  # This is a local variable in the outer function
-    print("Name before using nonlocal:", name)  # This will print the local variable 'name'
+    # Ye `outer_function` ka local variable hai.
+    name = "Atul"
+    print("Name before using nonlocal:", name)
 
-    # Nested function
+    # Ye outer function ke andar bana hua nested/inner function hai.
     def inner_function():
-        nonlocal name  # Referring to the variable 'name' in the outer function
-        name = "Aman"  # Updates the variable in the outer function
-        print("Name inside inner function:", name) # this will print aman cause this is a local variable in the inner function
+        # `nonlocal name` outer function ke `name` ko refer karta hai;
+        # isliye assignment outer wala variable update karegi, inner local nahi.
+        nonlocal name
+        name = "Aman"
+        print("Name inside inner function:", name)
 
     inner_function()
-    print("Name after using nonlocal:", name) # but this will print aman cause this is a local variable in the outer function
+    # Inner function ne outer ka `name` update kiya, isliye yahan "Aman" milega.
+    print("Name after using nonlocal:", name)
 
-outer_function()  # Calling the outer function
+outer_function()
