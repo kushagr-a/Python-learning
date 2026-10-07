@@ -64,3 +64,4 @@ ginger = GingerChai("Regular", "Strong", "Extra Strong")
 print(f"Chai Type (Parent se aaya): {ginger.type}")
 print(f"Chai Strength (Parent se aaya): {ginger.strength}")
 print(f"Spice Level (Child ka apna): {ginger.spice_level}")
+ 
