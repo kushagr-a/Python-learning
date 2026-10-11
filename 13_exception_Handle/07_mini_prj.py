@@ -17,7 +17,6 @@ def bill(flavor, cups):
         print("Thanks for visiting chai sutta bar")
 
 
-
 bill("masala", "two")
 # output -> Quantity must be a positive number
 
