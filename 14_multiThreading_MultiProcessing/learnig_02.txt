@@ -1,0 +1,133 @@
+================================================================================
+           CONCURRENCY & PARALLELISM TOOLS IN PYTHON (Quick Guide)
+================================================================================
+
+1. CONCURRENCY TOOLS (I/O Bound - Waiting wale Kaam)
+--------------------------------------------------------------------------------
+
+A) threading.Thread (Preemptive Multitasking - OS Threads)
+   * KYA HAI:
+     - Ye operating system ke threads banata hai.
+     - Ek hi process ke andar multiple threads chalte hain aur same memory share karte hain.
+   * KAISE KAAM KARTA HAI:
+     - Operating System decide karta hai ki kaun sa thread kab chalega.
+     - Python GIL (Global Interpreter Lock) ki wajah se ek time par ek hi thread
+       Python code execute kar sakta hai, LEKIN jab thread wait kar raha ho
+       (e.g., file read ya network download), tab GIL release ho jata hai aur
+       doosra thread execute hota hai.
+   * KAHA USE HOTA HAI:
+     - UI Applications (Tkinter/PyQt): Background task chalana taaki UI freeze na ho.
+     - Ek-do background workers (e.g. log file writer, heartbeat ping).
+     - Simple I/O waiting tasks (10-50 simultaneous tasks).
+   * EXAMPLE:
+     import threading
+     import time
+
+     def download(filename):
+         time.sleep(2)
+         print(f"{filename} done")
+
+     t = threading.Thread(target=download, args=("file.pdf",))
+     t.start()
+     t.join()
+
+
+B) asyncio (Cooperative Multitasking - Single Thread Event Loop)
+   * KYA HAI:
+     - Ye NAYI aur MODERN approach hai.
+     - Isme koi naya OS thread nahi banta! Sirf 1 thread hota hai jisme ek
+       "Event Loop" chalta hai with `async` aur `await` keywords.
+   * KAISE KAAM KARTA HAI:
+     - Yaha OS nahi, balki AAPKA CODE decide karta hai kab switch karna hai.
+     - Jab aap `await` likhte ho (jaise network call ka intezar), wo task bolta hai:
+       "Mujhe 2 sec lagenge, tab tak tum doosra kaam kar lo".
+     - Threading ke muqable ye super-lightweight hota hai.
+   * KAHA USE HOTA HAI:
+     - High-performance web servers (FastAPI, aiohttp).
+     - Web scraping (Ek sath 10,000 URLs se data fetch karna).
+     - Chat servers, WebSockets, Real-time APIs (thousands of active connections).
+   * EXAMPLE:
+     import asyncio
+
+     async def fetch_data():
+         await asyncio.sleep(2) # Non-blocking wait
+         return "Data received"
+
+     async def main():
+         data = await fetch_data()
+         print(data)
+
+     asyncio.run(main())
+
+--------------------------------------------------------------------------------
+👉 THREADING vs ASYNCIO RULE OF THUMB:
+- 10 se 100 tasks hain aur simple code chahiye? -> `threading`
+- 1,000 se 100,000 I/O connections handle karne hain? -> `asyncio`
+--------------------------------------------------------------------------------
+
+
+2. PARALLELISM TOOLS (CPU Bound - Heavy Calculation wale Kaam)
+--------------------------------------------------------------------------------
+
+C) multiprocessing.Process (Low-Level Multi-Core Processes)
+   * KYA HAI:
+     - Ye sach-much ke alag-alag OS Processes banata hai.
+     - Har process ka apna ALAG Python Interpreter, ALAG Memory space aur ALAG GIL hota hai!
+   * KAISE KAAM KARTA HAI:
+     - Aapke computer ke alag-alag CPU Cores par alag processes parallelly chalti hain.
+     - True 100% CPU hardware speed milti hai.
+   * KAHA USE HOTA HAI:
+     - Heavy mathematical calculations, loops with billions of iterations.
+     - Image / Audio / Video processing.
+     - ML data preprocessing.
+   * EXAMPLE:
+     import multiprocessing
+
+     def heavy_calc(number):
+         return sum(i * i for i in range(number))
+
+     if __name__ == '__main__':
+         p = multiprocessing.Process(target=heavy_calc, args=(10_000_000,))
+         p.start()
+         p.join()
+
+
+D) concurrent.futures.ProcessPoolExecutor (High-Level Modern Manager)
+   * KYA HAI:
+     - Ye `multiprocessing.Process` ka modern, smart wrapper hai.
+     - Isme aapko manually `Process()`, `start()`, `join()` karne ki tension nahi leni hoti.
+   * KAISE KAAM KARTA HAI:
+     - Ye ek "Worker Pool" (Workers ki toli) bana deta hai (jaise 4 CPU cores ke liye 4 workers).
+     - Aap 100 tasks dete ho, ye khud ba khud tasks ko available workers me baant deta hai
+       aur answers la kar de deta hai.
+   * KAHA USE HOTA HAI:
+     - Batch processing: Jaise 500 images ko resize karna hai, ya 1000 files ko parse karna hai.
+     - Jab aapko tasks ke results (return values) easily collect karne ho.
+   * EXAMPLE:
+     from concurrent.futures import ProcessPoolExecutor
+
+     def square(n):
+         return n * n
+
+     if __name__ == '__main__':
+         numbers = [1, 2, 3, 4, 5]
+         with ProcessPoolExecutor() as executor:
+             results = list(executor.map(square, numbers))
+             print(results)  # [1, 4, 9, 16, 25]
+
+--------------------------------------------------------------------------------
+👉 BONUS: `concurrent.futures.ThreadPoolExecutor`
+- Jaisa ProcessPoolExecutor CPU ke liye hai, waisa hi ThreadPoolExecutor
+  threads (I/O) ke liye hai. Ek hi clean API se dono kaam ho jaate hain!
+--------------------------------------------------------------------------------
+
+
+3. SUMMARY CHEATSHEET (Kab kaun sa chunna hai?)
+--------------------------------------------------------------------------------
+Task Type      | Problem                               | Best Tool
+--------------------------------------------------------------------------------
+I/O Bound      | File download, DB calls (Few tasks)   | `threading.Thread`
+I/O Bound      | Web server, Scraping 1000s of URLs    | `asyncio`
+CPU Bound      | 1 ya 2 manual heavy background tasks  | `multiprocessing.Process`
+CPU Bound      | List of 100s of heavy tasks in batch  | `ProcessPoolExecutor`
+================================================================================
