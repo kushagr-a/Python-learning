@@ -1,0 +1,207 @@
+============================================================
+LLM - Large Language Model
+============================================================
+
+LLM ka full form "Large Language Model" hai.
+
+LLM Artificial Intelligence (AI) ka ek model hai jo bahut bade text
+dataset par train hota hai. Is training ki wajah se LLM language ke
+patterns seekhta hai aur text ko:
+
+1. read/process kar sakta hai,
+2. context ke basis par samajhne ki koshish kar sakta hai,
+3. naya text generate kar sakta hai.
+
+Important:
+LLM insan ki tarah consciousness ke saath language nahi samajhta.
+Ye learned patterns aur probabilities ke basis par next token predict
+karta hai.
+
+
+============================================================
+LLM internally kaise kaam karta hai?
+============================================================
+
+Example:
+
+User:  Hi
+LLM:   Hey there! How are you?
+
+Is process ko simple form me aise samjho:
+
+User ka text
+    |
+    v
+Tokenization
+    |
+    v
+Token IDs (numbers)
+    |
+    v
+Transformer model
+    |
+    v
+Next token ki probability
+    |
+    v
+Selected token
+    |
+    v
+Repeated prediction
+    |
+    v
+Final response
+
+LLM poora answer ek hi baar me nahi likhta. Ye answer ko token by token
+generate karta hai. Har step par ye decide karta hai ki abhi tak ke
+context ke baad next token kya hona chahiye.
+
+Example:
+
+Input:  "The sky is"
+Possible next tokens:
+    "blue"  -> high probability
+    "large" -> lower probability
+    "running" -> very low probability
+
+Model probability ke basis par ek token select karta hai. Phir woh token
+context me add hota hai aur next token predict kiya jata hai.
+
+
+============================================================
+Training aur response generation
+============================================================
+
+1. Training phase:
+   Model ko bahut bade text data par train kiya jata hai.
+   Training ke dauran model repeatedly next token predict karta hai.
+   Prediction galat hone par model ke internal weights update hote hain.
+   Bahut baar repeat hone ke baad model language patterns learn karta hai.
+
+2. Inference phase:
+   Jab hum LLM ko prompt dete hain, ise inference kehte hain.
+   Model learned weights ka use karke prompt ke context me next tokens
+   predict karta hai aur response generate karta hai.
+
+Training aur inference alag cheezein hain:
+   - Training: model seekhta hai.
+   - Inference: trained model answer deta hai.
+
+
+============================================================
+GPT ka matlab
+============================================================
+
+GPT = Generative Pre-trained Transformer
+
+Generative:
+   Model naya text generate kar sakta hai.
+
+Pre-trained:
+   Model pehle se bahut bade dataset par train kiya ja chuka hota hai.
+   Baad me ise specific tasks ke liye further tune bhi kiya ja sakta hai.
+
+Transformer:
+   Ye neural network architecture hai jo input ke different parts ke
+   beech relationship ko attention mechanism se calculate karta hai.
+   Isse model context me important words/tokens par focus kar pata hai.
+
+
+============================================================
+Token aur Tokenization
+============================================================
+
+Token text ka ek chhota piece hota hai. Token zaroori nahi ki ek
+alphabet/character hi ho.
+
+Ek token ho sakta hai:
+   - poora word
+   - word ka ek part
+   - punctuation
+   - space ke saath word ka part
+   - kabhi-kabhi ek single character
+
+Example (exact tokens tokenizer par depend karte hain):
+
+Text: "Hello, world!"
+Possible tokens:
+   "Hello"
+   ","
+   " world"
+   "!"
+
+Isliye "every alphabet is a token" statement exact nahi hai.
+Correct statement:
+   Text ko tokenizer chhote pieces, yani tokens, me divide karta hai.
+
+Tokenization:
+   Raw text ko tokens me convert karne ki process ko tokenization kehte hain.
+
+Token IDs:
+   Model text ko directly words ke roop me process nahi karta.
+   Har token ko vocabulary me ek numeric ID di jati hai.
+
+Example:
+   Text:      "Hello, world!"
+   Tokens:    ["Hello", ",", " world", "!"]
+   Token IDs: [...., ...., ...., ....]
+
+Actual token IDs tokenizer aur model ke according change hote hain.
+
+Python me tiktoken se example:
+
+    import tiktoken
+
+    enc = tiktoken.encoding_for_model("gpt-4o")
+    text = "Hello, world!"
+
+    token_ids = enc.encode(text)
+    print(token_ids)
+    print(enc.decode(token_ids))
+
+`encode()` text ko token IDs me convert karta hai.
+`decode()` token IDs ko wapas text me convert karta hai.
+
+
+============================================================
+GPU ki zaroorat kyon hoti hai?
+============================================================
+
+LLM ke andar bahut saare parameters aur bade matrix calculations hote
+hain. In calculations ko parallel way me karna hota hai.
+
+GPU (Graphics Processing Unit) ek saath bahut saari mathematical
+calculations kar sakta hai, isliye LLM training aur fast inference ke
+liye GPU commonly use kiya jata hai.
+
+Lekin:
+   - Har LLM ko GPU ki strictly mandatory zaroorat nahi hoti.
+   - Chhote models CPU par bhi chal sakte hain.
+   - Large models ko train karne ke liye usually multiple powerful GPUs
+     ya specialized accelerators ki zaroorat padti hai.
+   - GPU speed badhata hai; GPU khud LLM nahi hota.
+
+
+============================================================
+Short revision
+============================================================
+
+LLM:
+   Human language ke patterns learn karke text process aur generate karne
+   wala AI model.
+
+Token:
+   Text ka chhota piece.
+
+Tokenization:
+   Text ko tokens me todne ki process.
+
+Transformer:
+   Context aur token relationships process karne wali architecture.
+
+GPT:
+   Generative Pre-trained Transformer.
+
+Basic working:
+   Text -> tokens -> token IDs -> transformer -> next-token prediction
+   -> repeated tokens -> final response.
