@@ -1,7 +1,7 @@
 
 print("start of pydantic journey!!!!!")
 
-from pydantic import BaseModel
+from pydantic import BaseModel # type: ignore[reportMissingImports]
 
 class User(BaseModel):
     id: int
