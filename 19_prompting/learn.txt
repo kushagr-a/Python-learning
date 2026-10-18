@@ -1,0 +1,7 @@
+what is prompting --> 
+
+zero short prompting --> is a technique where the model is given a task without any prior examples or demonstrations. 
+Instead, the model is provided with a clear instruction or prompt that describes the task it needs to perform. 
+The model then generates a response based on its understanding of the prompt and its pre-existing knowledge.
+
+few shot prompting
