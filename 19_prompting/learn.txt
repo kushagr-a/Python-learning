@@ -1,7 +1,75 @@
-what is prompting --> 
+PROMPTING
+=========
 
-zero short prompting --> is a technique where the model is given a task without any prior examples or demonstrations. 
-Instead, the model is provided with a clear instruction or prompt that describes the task it needs to perform. 
-The model then generates a response based on its understanding of the prompt and its pre-existing knowledge.
+Prompting ka matlab hai AI model ko ek clear instruction dena, taaki model
+hamare required task ke according answer de sake.
 
-few shot prompting
+Prompt = AI ko diya gaya instruction ya question
+
+Example:
+    "Python mein list aur tuple ka difference simple language mein samjhao."
+
+Jitna clear prompt hoga, utna hi useful aur accurate response milne ke chances
+zyada honge.
+
+
+ZERO-SHOT PROMPTING
+===================
+
+Zero-shot prompting mein hum model ko task batate hain, lekin koi example
+provide nahi karte.
+
+Model apni pehle se available knowledge aur hamare instruction ko samajhkar
+answer generate karta hai.
+
+Example:
+    Prompt: "Is sentence ko Hindi mein translate karo:
+             Artificial Intelligence is useful."
+
+Is prompt mein translation ka koi example nahi diya gaya. Sirf task bataya gaya
+hai, isliye ise zero-shot prompting kehte hain.
+
+Kab use karein?
+    - Jab task simple aur clearly defined ho.
+    - Jab model bina example ke task samajh sakta ho.
+
+
+FEW-SHOT PROMPTING
+==================
+
+Few-shot prompting mein hum model ko task ke saath kuch examples bhi dete hain.
+Examples dekhkar model samajhta hai ki answer kis format, style ya pattern mein
+dena hai.
+
+Example:
+    Prompt:
+        English: Good morning
+        Hindi: सुप्रभात
+
+        English: Thank you
+        Hindi: धन्यवाद
+
+        English: How are you?
+        Hindi:
+
+Model diye gaye examples ka pattern samajhkar answer dega:
+    "आप कैसे हैं?"
+
+Kab use karein?
+    - Jab output ka specific format chahiye.
+    - Jab task thoda difficult ya uncommon ho.
+    - Jab model ko examples se desired style samjhana ho.
+
+
+ZERO-SHOT AUR FEW-SHOT MEIN DIFFERENCE
+======================================
+
+Zero-shot prompting:
+    Task/instruction diya jaata hai, examples nahi diye jaate.
+
+Few-shot prompting:
+    Task/instruction ke saath kuch examples bhi diye jaate hain.
+
+Simple way:
+    Zero-shot = "Yeh task karo."
+    Few-shot  = "Yeh task karo. Aise kuch examples dekho."
