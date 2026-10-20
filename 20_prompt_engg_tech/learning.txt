@@ -1,0 +1,155 @@
+# Prompting Formats
+
+Prompt format ka kaam model ko yeh batana hota hai ki instruction kya hai,
+user ka input kya hai, aur model ko answer kis jagah dena hai. Alag-alag
+models alag prompt templates expect karte hain, isliye model ke according
+correct format use karna important hai.
+
+## 1. Alpaca Prompting
+
+Alpaca format mein prompt ko generally teen sections mein divide kiya jata
+hai:
+
+```text
+### Instruction:
+<SYSTEM_PROMPT>
+
+### Input:
+<USER_QUERY>
+
+### Response:
+```
+
+- **Instruction:** model ko task ya rules batata hai.
+- **Input:** user ka actual question ya data hota hai.
+- **Response:** model ka answer yahan se start hota hai.
+
+### Example
+
+```text
+### Instruction:
+You are a Python teacher. Explain concepts in simple Hindi with a short
+example. Do not use unnecessarily complex words.
+
+### Input:
+Explain what a Python list is.
+
+### Response:
+```
+
+Expected response:
+
+```text
+A list Python mein multiple values ko ek hi variable mein store karne ke liye
+use hoti hai.
+
+Example:
+numbers = [10, 20, 30]
+print(numbers[0])  # 10
+```
+
+> Note: `\n` ka matlab newline hota hai. Actual prompt banate waqt ise line
+> break ke roop mein use kiya ja sakta hai.
+
+## 2. ChatML / Chat Completions Format
+
+ChatML-style format mein conversation ko messages ki list ke roop mein bheja
+jata hai. Har message ke do main fields hote hain:
+
+```json
+{
+  "role": "system" | "user" | "assistant",
+  "content": "string"
+}
+```
+
+### Roles ka meaning
+
+- **system:** assistant ka behaviour, personality, language, aur rules set karta
+  hai.
+- **user:** user ka question ya instruction hota hai.
+- **assistant:** assistant ka previous response hota hai. Isse conversation
+  ka context maintain kiya jata hai.
+
+### Example
+
+```json
+[
+  {
+    "role": "system",
+    "content": "You are a helpful Python teacher. Answer in simple Hindi."
+  },
+  {
+    "role": "user",
+    "content": "List aur tuple mein kya difference hai?"
+  },
+  {
+    "role": "assistant",
+    "content": "List mutable hoti hai, jabki tuple immutable hota hai."
+  },
+  {
+    "role": "user",
+    "content": "Dono ka ek-ek example do."
+  }
+]
+```
+
+Is format ka benefit yeh hai ki multi-turn chat ko structured way mein
+represent kiya ja sakta hai. OpenAI-compatible APIs mein aam taur par isi
+tarah `messages` bheje jate hain.
+
+## 3. `[INST]` Prompting (Llama 2)
+
+Llama 2 instruction-tuned models mein instruction ko `[INST]` aur `[/INST]`
+tags ke beech likha jata hai:
+
+```text
+<s>[INST] <USER_QUERY> [/INST] <MODEL_RESPONSE> </s>
+```
+
+- `[INST]` instruction ki beginning batata hai.
+- `[/INST]` instruction ka end batata hai.
+- `<s>` aur `</s>` sequence ke start aur end tokens ko represent karte hain.
+  Inhe model ki tokenizer/template requirements ke according use kiya jata
+  hai.
+
+### Simple example
+
+```text
+<s>[INST] What is the time now? [/INST]
+```
+
+### System instruction ke saath example
+
+Llama 2 chat template mein system instruction ko pehle `<<SYS>>` block mein
+likha ja sakta hai:
+
+```text
+<s>[INST] <<SYS>>
+You are a helpful assistant. Answer in simple Hindi.
+<</SYS>>
+
+Python mein variable kya hota hai? [/INST]
+```
+
+Expected response:
+
+```text
+Variable ek naam hota hai jisme hum kisi value ko store kar sakte hain.
+
+Example:
+name = "Kushagra"
+print(name)
+```
+
+## Quick Comparison
+
+| Format | Typical structure | Best use |
+|---|---|---|
+| Alpaca | `Instruction / Input / Response` | Instruction-following datasets |
+| ChatML | `system / user / assistant` messages | Multi-turn chat APIs |
+| Llama 2 `[INST]` | `[INST] ... [/INST]` | Llama 2 instruction prompts |
+
+Important: prompt format model ke training format se match karna chahiye.
+Galat template use karne par model instruction ko sahi tarah samajh nahi
+payega ya response quality kam ho sakti hai.
