@@ -4,6 +4,8 @@ from dotenv import load_dotenv  # type: ignore[reportMissingImports]
 import os
 import json
 import requests  # type: ignore[reportMissingImports]
+from pydantic import BaseModel, Field  # type: ignore[reportMissingImports]
+from typing import Optional
 
 # few-shot prompting : Directly giving the instructions to the model and few examples to the model.
 load_dotenv()  # Load environment variables from .env file
@@ -12,6 +14,10 @@ client = OpenAI(
     api_key=os.environ.get("GOOGLE_API_KEY"),
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
 )
+
+def runCommand(command: str):
+   result = os.system(command)
+   return result
 
 
 def get_weather(city: str):
@@ -25,7 +31,8 @@ def get_weather(city: str):
 
 
 available_tools = {
-    "get_weather": get_weather
+    "get_weather": get_weather,
+    "runCommand": runCommand
 }
 
 
@@ -48,6 +55,7 @@ Output JSON format:
 
 Available tools:
 - get_weather(city: str): Take city name as input and return the current weather information for that city.
+- runCommand(command: str): Execute a shell command and return the result.
 
 Example 1:
 
@@ -81,6 +89,12 @@ OUTPUT: { "step": "OUTPUT", "content": "The current weather in Delhi is [weather
 print("Welcome to the Chain of Thought Assistant!")
 print("\n\n\n")
 
+class MyOutputFormat(BaseModel):
+    step: str = Field(..., description="The current step in the process (START, PLAN, OUTPUT, TOOL).")
+    content: Optional[str] = Field(None, description="The content or message associated with the current step.")
+    tool: Optional[str] = Field(None, description="The name of the tool to be called, if applicable.")
+    input: Optional[str] = Field(None, description="The input for the tool, if applicable.")
+   
 message_history = [
     {
         "role": "system",
@@ -92,9 +106,9 @@ user_input = input("Hey write your query: ")
 message_history.append({"role": "user", "content": user_input})
 
 while True:
-    response = client.chat.completions.create(
+    response = client.chat.completions.parse(
         model="gemini-3.8-flash",
-        response_format={"type": "json_object"},
+        response_format=MyOutputFormat,
         messages=message_history,
     )
 
@@ -106,14 +120,16 @@ while True:
     # Add the assistant's response to the message history
     message_history.append({"role": "assistant", "content": raw_result})
 
-    if parsed_result.get("step") == "START":
+    parsed_result = response.choices[0].message.parsed
+
+    if parsed_result.step == "START":
         print(f"Assistant (START): {parsed_result.get('content')}")
         message_history.append(
             {"role": "user", "content": "Continue with the next step."}
         )
         continue  # Continue to the next iteration to get the PLAN step
 
-    if parsed_result.get("step") == "TOOL":
+    if parsed_result.step == "TOOL":
         tool_to_call = parsed_result.get("tool")
         tool_input = parsed_result.get("input")
         print(f"Assistant (TOOL): {parsed_result.get('content')}")
@@ -142,14 +158,14 @@ while True:
 
 
 
-    elif parsed_result.get("step") == "PLAN":
+    elif parsed_result.step == "PLAN":
         print("The assistant is planning...", parsed_result.get("content"))
         message_history.append(
             {"role": "user", "content": "Continue with the next step."}
         )
         continue  # Continue to the next iteration to get more PLAN steps
 
-    elif parsed_result.get("step") == "OUTPUT":
+    elif parsed_result.step == "OUTPUT":
         print(f"Assistant (OUTPUT): {parsed_result.get('content')}")
         break  # Exit the loop after OUTPUT is received
 
