@@ -1,0 +1,8 @@
+Full Form of RAG: Retrieval-Augmented Generation.
+
+RAG is an AI framework that combines the capabilities of large language models (LLMs) with external knowledge sources.
+
+Why do we use RAG, and where is it used?
+
+An LLM does not have context about your private or organization-specific data.
+RAG retrieves relevant information from external data sources and provides it to the LLM as context.
