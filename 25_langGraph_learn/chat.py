@@ -7,7 +7,7 @@ from typing_extensions import TypedDict # type: ignore[reportMissingImports]
 from typing import Annotated
 from langgaph.graph.message import add_messages # type: ignore[reportMissingImports]
 from langgaph.graph import StateGraph, START, END # type: ignore[reportMissingImports]
-from langchain.chat_models import init_chat_model
+from langchain.chat_models import init_chat_model # type: ignore[reportMissingImports]
 
 llm = init_chat_model(
     model="gemini-pro",
