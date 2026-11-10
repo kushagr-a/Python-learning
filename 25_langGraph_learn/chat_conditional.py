@@ -61,3 +61,7 @@ graph_builder.add_edge(START, "evaluate_response")
 graph_builder.add_conditional_edges("chatbot", "evaluate_response")
 
 graph_builder.add_edge("endNode", END)
+
+
+graph = graph_builder.compile()
+graph.invoke(state({"user_input": "What is the capital of France?"}))
